@@ -46,7 +46,9 @@ function getUser(token) {
 
 function getSafeUser(token) {
 	var user = users[token];
+	if (user){
 	return {name: user.name, image: user.image, tags: user.tags}
+	}
 }
 
 function tome() {
@@ -99,13 +101,17 @@ io.on('connection', function(socket){
 	});
 
 	socket.on("user ping", function(token) {
+		try{
 		getUser(token).lastPing = tome();
+		} catch(err) {
+			console.log(err)
+		}
 	});
 
 	socket.on('chat message', function(msg, token, fn){
-		getUser(token).lastPing = tome();
 		var userObj = getSafeUser(token);
 		if (!userObj) return;
+		getUser(token).lastPing = tome();
 
 		if(msg == '' || msg == undefined || msg == null) {
 			fn({
