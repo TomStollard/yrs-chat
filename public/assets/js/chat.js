@@ -134,7 +134,7 @@ function showMessage(message, user){
 
     html += '<div class="message">' +
       '<a style="color: ' + user.colour + ';" class="twitter-link" href="https://twitter.com/'+ twitterUser +'" target="_blank">' + '@' + user.name + '</a>' +
-      '<span class="label label-' + user.tags + '">' + user.tags + '</span><span class="label">' + formatTomestamp(message.tomestamp) + '</span>' +
+      '<span class="label label-' + user.tags + '">' + user.tags + '</span><span class="label">' + formatTomestamp(message.tomestamp) + '</span><br />' +
       '<p data-tomestamp="' + message.tomestamp + '"class="' + msgClass + '">' + message.text + '</p>';
 
     if(canTweet){
@@ -145,7 +145,7 @@ function showMessage(message, user){
 
   } else {
     messageElement = $('#messages li').last();
-    messageElement.find(".message").append("<p data-tomestamp='" + message.tomestamp + "'class='msg'>" + message.text + "</p>");
+    messageElement.find(".message").append("<br /><p data-tomestamp='" + message.tomestamp + "'class='msg'>" + message.text + "</p>");
 
     if (canTweet){
       messageElement.find(".message").append(makeTweetButton(message.text));
@@ -190,6 +190,7 @@ function deleteMessage(tomestamp){
   var messageP = $('.msg[data-tomestamp=' + tomestamp + ']');
   if (messageP.parent().find("p.msg").length == 1){
     messageP.parent().parent().remove();
+    lastUser=null;
   } else{
     messageP.next().remove();
     messageP.remove();
@@ -269,6 +270,8 @@ socket.on("user leave", function(user) {
   SayAsServer(user.name + " has left.");
   getUsers(socket);
 });
+
+socket.on("delete message", deleteMessage);
 
 getUsers(socket);
 
